@@ -8,6 +8,8 @@ import { AuthProvider } from "@/lib/auth";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Services from "./pages/Services";
 import Booking from "./pages/Booking";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/services" element={<Services />} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/dashboard" element={<Dashboard />} />

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
-import { User, CreditCard, Star, Loader2 } from 'lucide-react';
+import { User, CreditCard, Star, Loader2, Lock, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Profile() {
@@ -16,6 +16,15 @@ export default function Profile() {
     full_name: profile?.full_name || '',
     phone: profile?.phone || '',
     address: profile?.address || '',
+  });
+
+  // Password change state
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const handleSave = async () => {
@@ -39,6 +48,34 @@ export default function Profile() {
       setIsEditing(false);
     }
     setIsSaving(false);
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setIsSavingPassword(true);
+
+    const { error } = await supabase.auth.updateUser({
+      password: passwordData.newPassword,
+    });
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Password updated successfully');
+      setIsChangingPassword(false);
+      setPasswordData({ newPassword: '', confirmPassword: '' });
+    }
+
+    setIsSavingPassword(false);
   };
 
   return (
@@ -144,6 +181,72 @@ export default function Profile() {
               <span>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</span>
             </div>
           </div>
+        </div>
+
+        {/* Password Change */}
+        <div className="mt-6 rounded-xl border border-border bg-card p-6">
+          <div className="mb-4 flex items-center gap-3">
+            <Lock className="h-5 w-5 text-muted-foreground" />
+            <h3 className="font-display font-bold">Password</h3>
+          </div>
+
+          {isChangingPassword ? (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>New Password</Label>
+                <div className="relative">
+                  <Input
+                    type={showPasswords ? 'text' : 'password'}
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                    placeholder="••••••••"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords(!showPasswords)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Confirm New Password</Label>
+                <Input
+                  type={showPasswords ? 'text' : 'password'}
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handlePasswordChange} disabled={isSavingPassword}>
+                  {isSavingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Update Password
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsChangingPassword(false);
+                    setPasswordData({ newPassword: '', confirmPassword: '' });
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Secure your account with a strong password
+              </p>
+              <Button variant="outline" onClick={() => setIsChangingPassword(true)}>
+                Change Password
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
