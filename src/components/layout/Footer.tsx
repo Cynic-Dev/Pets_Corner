@@ -12,7 +12,7 @@ export function Footer() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                 <PawPrint className="h-5 w-5" />
               </div>
-              PawCare
+              Pets Corner
             </Link>
             <p className="text-sm text-muted-foreground">
               Premium pet grooming and boarding services. Your pet's happiness is our priority.
@@ -50,7 +50,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                hello@pawcare.com
+                hello@petscorner.com
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-primary mt-0.5" />
@@ -61,7 +61,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} PawCare. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Pets Corner. All rights reserved.</p>
         </div>
       </div>
     </footer>
